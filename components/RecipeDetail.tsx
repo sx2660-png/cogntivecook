@@ -103,7 +103,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
                 <ChefHat className="w-6 h-6 text-slate-900" />
               </div>
               <span className="font-extrabold text-xl tracking-tighter text-slate-900 hidden md:block">
-                DELISH<span className="font-normal">KITCHEN</span>
+                Cognitive<span className="font-normal">Cook</span>
               </span>
             </div>
           </div>
@@ -113,7 +113,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
             <input 
               type="text" 
               placeholder="Search recipes or ingredients..."
-              className="w-full h-10 pl-10 pr-4 rounded-sm border-none focus:ring-2 focus:ring-slate-900 outline-none text-sm shadow-inner"
+              className="w-full h-10 pl-10 pr-4 rounded-sm border-none focus:ring-2 focus:ring-slate-900 outline-none text-sm shadow-inner bg-white"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           </div>

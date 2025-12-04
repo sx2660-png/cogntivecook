@@ -96,29 +96,29 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 pb-20">
-      {/* Header - Delish Kitchen Style */}
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-100 shadow-sm">
+      {/* Header - Delish Kitchen Style (Yellow Background) */}
+      <header className="sticky top-0 z-30 bg-yellow-400 shadow-sm">
          <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between gap-4">
             {/* Logo Area */}
             <div className="flex items-center gap-2 shrink-0 cursor-pointer">
-              <div className="bg-orange-500 p-1.5 rounded-lg -rotate-6">
-                <ChefHat className="w-6 h-6 text-white" />
+              <div className="bg-white p-1 rounded-full border-2 border-slate-900">
+                <ChefHat className="w-6 h-6 text-slate-900" />
               </div>
               <div className="hidden md:block">
                 <h1 className="font-extrabold text-xl tracking-tight text-slate-900">
-                  Cognitive<span className="text-orange-500">Cook</span>
+                  Cognitive<span className="font-normal">Cook</span>
                 </h1>
               </div>
             </div>
 
-            {/* Search Bar - Centered & Prominent */}
+            {/* Search Bar - White background for contrast on yellow */}
             <div className="flex-1 max-w-2xl relative">
                <input 
                  type="text" 
                  placeholder="Search by ingredients or recipe name..."
                  value={searchQuery}
                  onChange={(e) => setSearchQuery(e.target.value)}
-                 className="w-full h-10 md:h-12 pl-12 pr-4 bg-slate-100 rounded-full border-transparent focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all outline-none font-medium placeholder:text-slate-400 text-sm md:text-base"
+                 className="w-full h-10 md:h-12 pl-12 pr-4 bg-white rounded-full border-none focus:ring-2 focus:ring-slate-900 transition-all outline-none font-medium placeholder:text-slate-400 text-sm md:text-base shadow-sm"
                />
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             </div>
@@ -126,20 +126,20 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             {/* User Stats - Minimal with Level Progress */}
             <div className="flex items-center gap-4 shrink-0">
                <div className="hidden md:flex flex-col items-end">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{stats.title}</span>
-                  <div className="flex items-center gap-1 text-orange-500 font-bold">
-                     <Star className="w-4 h-4 fill-current" />
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">{stats.title}</span>
+                  <div className="flex items-center gap-1 text-slate-900 font-bold">
+                     <Star className="w-4 h-4 fill-current text-white drop-shadow-sm" />
                      <span>{stats.stars}</span>
                   </div>
                   {/* Progress Bar */}
-                  <div className="w-24 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden relative group cursor-help">
+                  <div className="w-24 h-1.5 bg-white/50 rounded-full mt-1 overflow-hidden relative group cursor-help">
                      <div 
-                       className="absolute top-0 left-0 h-full bg-orange-500 rounded-full transition-all duration-500"
+                       className="absolute top-0 left-0 h-full bg-slate-900 rounded-full transition-all duration-500"
                        style={{ width: `${progressPercent}%` }}
                      />
                      {/* Tooltip */}
                      {nextLevel && (
-                       <div className="absolute top-4 right-0 bg-slate-800 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                       <div className="absolute top-4 right-0 bg-slate-800 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
                          {starsToNext} stars to {nextLevel.title}
                        </div>
                      )}
@@ -153,19 +153,21 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             </div>
          </div>
 
-         {/* Tag Navigation (Quick Filters) */}
-         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex gap-2 overflow-x-auto hide-scrollbar">
-            {['All', 'Breakfast', 'Dinner', 'Under 10 min', 'Vegetarian', 'Meat', 'Dessert'].map((tag, i) => (
-               <button 
-                 key={tag}
-                 className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all border
-                   ${i === 0 
-                     ? 'bg-orange-500 border-orange-500 text-white' 
-                     : 'bg-white border-slate-200 text-slate-600 hover:border-orange-300 hover:text-orange-600'}`}
-               >
-                 {tag}
-               </button>
-            ))}
+         {/* Tag Navigation (Quick Filters) - Background white to separate from header */}
+         <div className="bg-white border-b border-slate-100">
+           <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex gap-2 overflow-x-auto hide-scrollbar">
+              {['All', 'Breakfast', 'Dinner', 'Under 10 min', 'Vegetarian', 'Meat', 'Dessert'].map((tag, i) => (
+                 <button 
+                   key={tag}
+                   className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all border
+                     ${i === 0 
+                       ? 'bg-yellow-400 border-yellow-400 text-slate-900' 
+                       : 'bg-white border-slate-200 text-slate-600 hover:border-yellow-400 hover:bg-yellow-50'}`}
+                 >
+                   {tag}
+                 </button>
+              ))}
+           </div>
          </div>
       </header>
 
