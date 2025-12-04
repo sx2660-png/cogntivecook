@@ -1,6 +1,16 @@
 
 import { Lesson, UserStats, DashboardItem } from './types';
 
+export const LEVEL_THRESHOLDS = [
+  { title: "Novice", minStars: 0 },
+  { title: "Home Cook", minStars: 50 },
+  { title: "Prep Cook", minStars: 100 },
+  { title: "Line Cook", minStars: 200 },
+  { title: "Sous Chef", minStars: 350 },
+  { title: "Executive Chef", minStars: 500 },
+  { title: "Culinary Legend", minStars: 1000 }
+];
+
 export const INITIAL_STATS: UserStats = {
   title: "Prep Cook",
   stars: 120,

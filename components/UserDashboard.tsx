@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { UserStats, DashboardItem } from '../types';
-import { DASHBOARD_DATA } from '../constants';
+import { DASHBOARD_DATA, LEVEL_THRESHOLDS } from '../constants';
 import { Play, Star, ChefHat, Search, Clock, Flame, ShieldCheck, Utensils, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -14,6 +15,21 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   onLessonSelect 
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Calculate Progress to Next Level
+  const currentLevelIndex = LEVEL_THRESHOLDS.findIndex(l => l.title === stats.title);
+  const currentLevel = LEVEL_THRESHOLDS[currentLevelIndex] || LEVEL_THRESHOLDS[0];
+  const nextLevel = LEVEL_THRESHOLDS[currentLevelIndex + 1];
+  
+  let progressPercent = 100;
+  let starsToNext = 0;
+  
+  if (nextLevel) {
+    const range = nextLevel.minStars - currentLevel.minStars;
+    const progress = stats.stars - currentLevel.minStars;
+    progressPercent = Math.min(100, Math.max(0, (progress / range) * 100));
+    starsToNext = nextLevel.minStars - stats.stars;
+  }
 
   // Helper to render a horizontal scroll section
   const Section = ({ title, subtitle, items, color, icon: Icon }: { title: string, subtitle?: string, items: DashboardItem[], color: string, icon: any }) => (
@@ -107,13 +123,26 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             </div>
 
-            {/* User Stats - Minimal */}
+            {/* User Stats - Minimal with Level Progress */}
             <div className="flex items-center gap-4 shrink-0">
                <div className="hidden md:flex flex-col items-end">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{stats.title}</span>
                   <div className="flex items-center gap-1 text-orange-500 font-bold">
                      <Star className="w-4 h-4 fill-current" />
                      <span>{stats.stars}</span>
+                  </div>
+                  {/* Progress Bar */}
+                  <div className="w-24 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden relative group cursor-help">
+                     <div 
+                       className="absolute top-0 left-0 h-full bg-orange-500 rounded-full transition-all duration-500"
+                       style={{ width: `${progressPercent}%` }}
+                     />
+                     {/* Tooltip */}
+                     {nextLevel && (
+                       <div className="absolute top-4 right-0 bg-slate-800 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                         {starsToNext} stars to {nextLevel.title}
+                       </div>
+                     )}
                   </div>
                </div>
                <img 

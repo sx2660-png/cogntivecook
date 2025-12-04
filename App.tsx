@@ -1,8 +1,10 @@
 
+'use client';
+
 import React, { useState } from 'react';
 import { UserDashboard } from './components/UserDashboard';
 import { RecipeDetail } from './components/RecipeDetail';
-import { SAMPLE_LESSON, INITIAL_STATS, LESSON_DATA } from './constants';
+import { SAMPLE_LESSON, INITIAL_STATS, LESSON_DATA, LEVEL_THRESHOLDS } from './constants';
 import { UserStats, DashboardItem } from './types';
 
 type View = 'dashboard' | 'recipe-detail';
@@ -12,12 +14,21 @@ export default function App() {
   const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
 
-  // Gamification: Handle earning stars
+  // Gamification: Handle earning stars and updating level title
   const handleEarnStar = (amount: number = 1) => {
-    setStats(prev => ({
-      ...prev,
-      stars: prev.stars + amount
-    }));
+    setStats(prev => {
+      const newStars = prev.stars + amount;
+      
+      // Calculate new title based on thresholds
+      // Find the highest threshold the user has met
+      const newLevel = [...LEVEL_THRESHOLDS].reverse().find(l => newStars >= l.minStars) || LEVEL_THRESHOLDS[0];
+      
+      return {
+        ...prev,
+        stars: newStars,
+        title: newLevel.title
+      };
+    });
   };
 
   // When a user selects an item from the dashboard
