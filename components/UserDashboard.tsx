@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { UserStats, DashboardItem } from '../types';
 import { DASHBOARD_DATA, LEVEL_THRESHOLDS } from '../constants';
-import { Play, Star, ChefHat, Search, Clock, Flame, ShieldCheck, Utensils, ChevronRight } from 'lucide-react';
+import { Play, Star, ChefHat, Clock, Flame, ShieldCheck, Utensils, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface UserDashboardProps {
@@ -14,8 +14,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   stats, 
   onLessonSelect 
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-
   // Calculate Progress to Next Level
   const currentLevelIndex = LEVEL_THRESHOLDS.findIndex(l => l.title === stats.title);
   const currentLevel = LEVEL_THRESHOLDS[currentLevelIndex] || LEVEL_THRESHOLDS[0];
@@ -111,18 +109,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
               </div>
             </div>
 
-            {/* Search Bar - White background for contrast on yellow */}
-            <div className="flex-1 max-w-2xl relative">
-               <input 
-                 type="text" 
-                 placeholder="Search by ingredients or recipe name..."
-                 value={searchQuery}
-                 onChange={(e) => setSearchQuery(e.target.value)}
-                 className="w-full h-10 md:h-12 pl-12 pr-4 bg-white rounded-full border-none focus:ring-2 focus:ring-slate-900 transition-all outline-none font-medium placeholder:text-slate-400 text-sm md:text-base shadow-sm"
-               />
-               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            </div>
-
             {/* User Stats - Minimal with Level Progress */}
             <div className="flex items-center gap-4 shrink-0">
                <div className="hidden md:flex flex-col items-end">
@@ -151,23 +137,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                  className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm" 
                />
             </div>
-         </div>
-
-         {/* Tag Navigation (Quick Filters) - Background white to separate from header */}
-         <div className="bg-white border-b border-slate-100">
-           <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex gap-2 overflow-x-auto hide-scrollbar">
-              {['All', 'Breakfast', 'Dinner', 'Under 10 min', 'Vegetarian', 'Meat', 'Dessert'].map((tag, i) => (
-                 <button 
-                   key={tag}
-                   className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all border
-                     ${i === 0 
-                       ? 'bg-yellow-400 border-yellow-400 text-slate-900' 
-                       : 'bg-white border-slate-200 text-slate-600 hover:border-yellow-400 hover:bg-yellow-50'}`}
-                 >
-                   {tag}
-                 </button>
-              ))}
-           </div>
          </div>
       </header>
 

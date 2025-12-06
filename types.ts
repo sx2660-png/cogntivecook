@@ -26,6 +26,19 @@ export interface QuizQuestion {
   explanation: string;
 }
 
+export interface ComparisonItem {
+  label: string;
+  heatLevel: 'Low' | 'Medium' | 'High' | 'Extreme';
+  motion: 'Static' | 'Constant';
+  cookware: string;
+}
+
+export interface ComparisonData {
+  title: string;
+  itemA: ComparisonItem;
+  itemB: ComparisonItem;
+}
+
 export interface Step {
   id: number;
   title: string;
@@ -33,6 +46,11 @@ export interface Step {
   duration: number; // Seconds
   instruction: string; // Text with markdown-style highlights like *text*
   quiz?: QuizQuestion; // Optional interruption
+  comparison?: ComparisonData; // New field for Concept Comparison
+  
+  // Scaffolded Learning Fields
+  challenge?: string; // The Active Recall question (e.g., "Which part of the knife?")
+  recallConcept?: string; // The AO/Hint (e.g., "Recall the Leverage Model")
 }
 
 export interface RecipeMetadata {

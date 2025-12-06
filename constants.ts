@@ -59,6 +59,15 @@ export const DASHBOARD_DATA: Record<string, DashboardItem[]> = {
       tags: ["Cutting", "Prep"]
     },
     {
+      id: "tech-heat",
+      title: "Heat Mastery: Sear vs Stir-Fry",
+      type: "technique",
+      image: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&fit=crop&q=80&w=800",
+      duration: "15 min",
+      level: "Intermediate",
+      tags: ["Heat Control", "Methods"]
+    },
+    {
       id: "tech-boiling",
       title: "Boiling & Blanching",
       type: "technique",
@@ -156,7 +165,9 @@ const SCRAMBLED_EGGS_LESSON: Lesson = {
       title: "Crack & Whisk",
       videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200&profile_id=164&oauth2_token_id=57447761",
       duration: 10,
-      instruction: "Whisk eggs vigorously until *frothy* and uniform in color. Add a pinch of *salt* now."
+      instruction: "Whisk eggs vigorously until *frothy* and uniform in color. Add a pinch of *salt* now.",
+      challenge: "When should you add the salt, and why?",
+      recallConcept: "Lesson 1: Seasoning early helps break down proteins."
     },
     {
       id: 2,
@@ -164,6 +175,8 @@ const SCRAMBLED_EGGS_LESSON: Lesson = {
       videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83&profile_id=164&oauth2_token_id=57447761",
       duration: 15,
       instruction: "Set burner to *Medium-Low*. Melt butter until it *foams*, but does not brown.",
+      challenge: "Which heat level prevents rubbery eggs?",
+      recallConcept: "Heat Mastery: Low heat enables slow coagulation.",
       quiz: {
         question: "Why do we use Medium-Low heat?",
         options: ["Cook faster", "Prevent rubbery texture", "Burn butter"],
@@ -176,14 +189,18 @@ const SCRAMBLED_EGGS_LESSON: Lesson = {
       title: "The Push Technique",
       videoUrl: "https://player.vimeo.com/external/410464227.sd.mp4?s=21382405d45207c4581452a3250e2920257e8412&profile_id=164&oauth2_token_id=57447761",
       duration: 20,
-      instruction: "Pour eggs in. Wait *5 seconds*, then gently *push* curds from edge to center."
+      instruction: "Pour eggs in. Wait *5 seconds*, then gently *push* curds from edge to center.",
+      challenge: "What motion creates the 'Large Curd' texture?",
+      recallConcept: "Technique: The 'Push' vs 'Scramble' motion."
     },
     {
       id: 4,
       title: "Finish Off Heat",
       videoUrl: "https://player.vimeo.com/external/372332147.sd.mp4?s=01726a7605d3923a1a382c442468d6c757c91350&profile_id=164&oauth2_token_id=57447761",
       duration: 10,
-      instruction: "Remove from heat while slightly *runny*. Residual heat will finish cooking them."
+      instruction: "Remove from heat while slightly *runny*. Residual heat will finish cooking them.",
+      challenge: "Why remove the pan while the eggs are still wet?",
+      recallConcept: "Physics: Carry-over cooking continues after heat source is removed."
     }
   ]
 };
@@ -207,7 +224,7 @@ export const LESSON_DATA: Record<string, Lesson> = {
   "equipment-101": {
     id: "equipment-101",
     title: "Essential Equipment",
-    description: "Identify and use the core tools of a professional kitchen.",
+    description: "Identify and use the core tools of a professional kitchen. Includes interactive 3D model study.",
     metadata: { rating: 4.7, reviewCount: 85, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Free", difficulty: "Beginner", servings: 1 },
     tools: [], ingredients: [], ingredientList: [],
     steps: [
@@ -228,12 +245,50 @@ export const LESSON_DATA: Record<string, Lesson> = {
   "tech-cutting": {
     id: "tech-cutting",
     title: "Knife Skills: Chopping",
-    description: "Master the 'Claw Grip' and 'Rocking Motion' to chop safely and efficiently.",
+    description: "Master the 'Claw Grip' and 'Rocking Motion'. View our 3D Knife Anatomy model to understand leverage.",
     metadata: { rating: 4.9, reviewCount: 200, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Free", difficulty: "Intermediate", servings: 1 },
     tools: [], ingredients: [], ingredientList: [],
     steps: [
       { id: 1, title: "The Claw Grip", videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", duration: 15, instruction: "Tuck your fingertips *in* to protect them from the blade." },
       { id: 2, title: "Rocking Motion", videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200", duration: 20, instruction: "Keep the tip of the knife *on the board* while rocking the handle up and down." }
+    ]
+  },
+  "tech-heat": {
+    id: "tech-heat",
+    title: "Heat Mastery: Sear vs Stir-Fry",
+    description: "Understand how temperature and motion change the outcome of your dish using the Comparison Model.",
+    metadata: { rating: 4.8, reviewCount: 150, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Free", difficulty: "Intermediate", servings: 1 },
+    tools: [], ingredients: [], ingredientList: [],
+    steps: [
+      { 
+        id: 1, 
+        title: "Comparison: Sear vs Stir-Fry", 
+        videoUrl: "", 
+        duration: 30, 
+        instruction: "Use *High Static Heat* for searing to create a crust. Use *High Motion Heat* for stir-fry to cook evenly without burning.",
+        comparison: {
+          title: "Cooking Methods",
+          itemA: {
+            label: "Pan-Sear",
+            heatLevel: "High",
+            motion: "Static",
+            cookware: "Cast Iron"
+          },
+          itemB: {
+            label: "Stir-Fry",
+            heatLevel: "Extreme",
+            motion: "Constant",
+            cookware: "Wok"
+          }
+        }
+      },
+      { 
+        id: 2, 
+        title: "The Maillard Reaction", 
+        videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", 
+        duration: 20, 
+        instruction: "Browning creates flavor. This only happens above *300°F (150°C)*." 
+      }
     ]
   },
   "tech-boiling": {
@@ -271,9 +326,33 @@ export const LESSON_DATA: Record<string, Lesson> = {
         { name: "Black Pepper", amount: "plenty", group: "Seasoning" }
     ],
     steps: [
-      { id: 1, title: "Crisp the Guanciale", videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200", duration: 20, instruction: "Cook guanciale in a cold pan until fat *renders* and it becomes crispy." },
-      { id: 2, title: "Temper the Eggs", videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", duration: 15, instruction: "Whisk yolks with cheese. Add a splash of *pasta water* to prevent scrambling." },
-      { id: 3, title: "Toss and Emulsify", videoUrl: "https://player.vimeo.com/external/410464227.sd.mp4?s=21382405d45207c4581452a3250e2920257e8412", duration: 20, instruction: "Toss pasta with fat off heat. Add egg mixture and stir *vigorously* to create sauce." }
+      { 
+        id: 1, 
+        title: "Crisp the Guanciale", 
+        videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200", 
+        duration: 20, 
+        instruction: "Cook guanciale in a cold pan until fat *renders* and it becomes crispy.",
+        challenge: "Why start with a cold pan?",
+        recallConcept: "Physics: Fat rendering requires gradual heat."
+      },
+      { 
+        id: 2, 
+        title: "Temper the Eggs", 
+        videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", 
+        duration: 15, 
+        instruction: "Whisk yolks with cheese. Add a splash of *pasta water* to prevent scrambling.",
+        challenge: "What does the starchy pasta water do?",
+        recallConcept: "Chemistry: Emulsification binds fat and water."
+      },
+      { 
+        id: 3, 
+        title: "Toss and Emulsify", 
+        videoUrl: "https://player.vimeo.com/external/410464227.sd.mp4?s=21382405d45207c4581452a3250e2920257e8412", 
+        duration: 20, 
+        instruction: "Toss pasta with fat off heat. Add egg mixture and stir *vigorously* to create sauce.",
+        challenge: "Why must this happen 'Off Heat'?",
+        recallConcept: "Temperature: Eggs scramble at 150°F+ (Direct heat is too hot)."
+      }
     ]
   },
   "steak-mashed": {

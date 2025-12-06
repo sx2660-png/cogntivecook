@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Lesson, Step } from '../types';
 import { ChevronRight, ChevronLeft, Upload, Camera, Award, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { QuizOverlay } from './QuizOverlay';
+import { ConceptComparison } from './ConceptComparison';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LessonPlayerProps {
@@ -47,7 +48,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({ lesson, onLessonComp
 
   // Auto-play video when step changes & reset state
   useEffect(() => {
-    if (videoRef.current) {
+    // Only attempt to control video if the current step IS a video step (not a comparison)
+    if (currentStep && !currentStep.comparison && videoRef.current) {
       videoRef.current.currentTime = 0;
       setProgress(0);
       setIsPlaying(true);
@@ -56,7 +58,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({ lesson, onLessonComp
         setIsPlaying(false);
       });
     }
-  }, [currentStepIndex]);
+  }, [currentStepIndex, currentStep]);
 
   // Sync Video Events with UI
   useEffect(() => {
@@ -79,7 +81,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({ lesson, onLessonComp
       video.removeEventListener('pause', updatePlayState);
       video.removeEventListener('timeupdate', updateProgress);
     };
-  }, []);
+  }, [currentStep]); // Re-bind if step type changes causing re-render
 
   const handleTogglePlay = () => {
     if (videoRef.current) {
@@ -109,16 +111,9 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({ lesson, onLessonComp
   };
 
   const handleNext = () => {
-    // Checkpoint logic
-    if (currentStep && currentStep.quiz && !showQuiz) {
-      // If we haven't shown the quiz yet, show it now instead of moving forward (but we assume quiz completed lets us move forward)
-      // Actually, let's track quiz completion status if we wanted to be strict.
-      // For this demo, simply triggering it if present.
-    }
-    
     if (currentStepIndex < lesson.steps.length) {
        // If current step has a quiz, we show it. 
-       if (currentStep.quiz) {
+       if (currentStep && currentStep.quiz) {
          setShowQuiz(true);
        } else {
          setCurrentStepIndex(prev => prev + 1);
@@ -212,60 +207,68 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({ lesson, onLessonComp
       {/* Main Split Content */}
       <div className="flex-1 overflow-hidden relative">
          <div className="grid grid-cols-1 md:grid-cols-2 h-full">
-            {/* Left: Video (Multimedia Principle) */}
+            {/* Left: Multimedia (Video OR Comparison) */}
             <div className="bg-black relative flex items-center justify-center group overflow-hidden">
                 {currentStep && (
-                    <video 
-                        ref={videoRef}
-                        key={currentStep.videoUrl} // Force reload on step change
-                        src={currentStep.videoUrl}
-                        className="w-full h-full object-contain"
-                        loop
-                        muted={isMuted}
-                        playsInline
-                        autoPlay
-                    />
+                  <>
+                    {currentStep.comparison ? (
+                       <ConceptComparison data={currentStep.comparison} />
+                    ) : (
+                      <>
+                        <video 
+                            ref={videoRef}
+                            key={currentStep.videoUrl} // Force reload on step change
+                            src={currentStep.videoUrl}
+                            className="w-full h-full object-contain"
+                            loop
+                            muted={isMuted}
+                            playsInline
+                            autoPlay
+                        />
+                        <div className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white px-3 py-1 rounded font-mono text-xs uppercase tracking-widest pointer-events-none">
+                            Step {currentStepIndex + 1}
+                        </div>
+
+                        {/* Custom Video Controls Overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-4">
+                          {/* Play/Pause */}
+                          <button 
+                            onClick={handleTogglePlay}
+                            className="text-white hover:text-orange-400 transition-colors"
+                          >
+                            {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current" />}
+                          </button>
+
+                          {/* Seek Bar */}
+                          <div className="flex-1 relative h-1.5 bg-white/30 rounded-full overflow-hidden">
+                             {/* Progress Fill */}
+                             <div 
+                               className="absolute top-0 left-0 h-full bg-orange-500 rounded-full"
+                               style={{ width: `${progress}%` }}
+                             />
+                             {/* Interactive Input */}
+                             <input 
+                               type="range" 
+                               min="0" 
+                               max="100" 
+                               value={progress} 
+                               onChange={handleSeek}
+                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                             />
+                          </div>
+
+                          {/* Volume Toggle */}
+                          <button 
+                            onClick={handleToggleMute}
+                            className="text-white hover:text-orange-400 transition-colors"
+                          >
+                            {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </>
                 )}
-                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white px-3 py-1 rounded font-mono text-xs uppercase tracking-widest pointer-events-none">
-                    Step {currentStepIndex + 1}
-                </div>
-
-                {/* Custom Video Controls Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-4">
-                  {/* Play/Pause */}
-                  <button 
-                    onClick={handleTogglePlay}
-                    className="text-white hover:text-orange-400 transition-colors"
-                  >
-                    {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current" />}
-                  </button>
-
-                  {/* Seek Bar */}
-                  <div className="flex-1 relative h-1.5 bg-white/30 rounded-full overflow-hidden">
-                     {/* Progress Fill */}
-                     <div 
-                       className="absolute top-0 left-0 h-full bg-orange-500 rounded-full"
-                       style={{ width: `${progress}%` }}
-                     />
-                     {/* Interactive Input */}
-                     <input 
-                       type="range" 
-                       min="0" 
-                       max="100" 
-                       value={progress} 
-                       onChange={handleSeek}
-                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                     />
-                  </div>
-
-                  {/* Volume Toggle */}
-                  <button 
-                    onClick={handleToggleMute}
-                    className="text-white hover:text-orange-400 transition-colors"
-                  >
-                    {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-                  </button>
-                </div>
             </div>
 
             {/* Right: Instruction (Coherence & Signaling) */}
