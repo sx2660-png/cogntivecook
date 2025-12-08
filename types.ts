@@ -42,7 +42,8 @@ export interface ComparisonData {
 export interface Step {
   id: number;
   title: string;
-  videoUrl: string; // Placeholder URL
+  videoUrl: string; // Placeholder URL for video
+  image?: string; // Optional static image for photo-based steps (Lessons 1 & 2)
   duration: number; // Seconds
   instruction: string; // Text with markdown-style highlights like *text*
   quiz?: QuizQuestion; // Optional interruption
@@ -69,7 +70,9 @@ export interface Lesson {
   id: string;
   title: string;
   description: string;
-  metadata: RecipeMetadata; // New field
+  metadata: RecipeMetadata;
+  image?: string; // Display image for the lesson
+  heroVideoUrl?: string; // Optional video for the hero section
   tools: Tool[];
   ingredients: Ingredient[]; // Used for pre-training visual
   ingredientList: { name: string; amount: string; group?: string }[]; // Used for list view

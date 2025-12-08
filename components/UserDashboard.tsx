@@ -40,9 +40,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
            <h2 className="text-xl md:text-2xl font-bold text-slate-800 leading-tight">{title}</h2>
            {subtitle && <p className="text-slate-400 text-sm font-medium">{subtitle}</p>}
         </div>
-        <button className="ml-auto text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-1">
-            See All <ChevronRight className="w-4 h-4" />
-        </button>
+        {/* Removed "See All" */}
       </div>
 
       <div className="flex gap-4 overflow-x-auto pb-6 px-6 md:px-0 snap-x hide-scrollbar">
@@ -145,7 +143,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
         {/* Lesson 1: Foundations */}
         <Section 
           title="Lesson 1: Foundations" 
-          subtitle="Pre-training: Safety, Equipment & Ingredients"
+          subtitle="Pre-training: Key Terminology & Equipment"
           items={DASHBOARD_DATA.lesson1}
           color="bg-blue-500"
           icon={ShieldCheck}
@@ -173,6 +171,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
         <div className="px-6 md:px-0 mt-16">
           <h2 className="text-2xl font-bold text-slate-800 mb-6">Your Culinary Gallery</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+             {/* Render User Photos - Starting Empty */}
              {stats.uploadedPhotos.map((photo, i) => (
                 <motion.div 
                   key={i} 
@@ -185,6 +184,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                    </div>
                 </motion.div>
              ))}
+             {/* Always show Add Button */}
              <div className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all cursor-pointer">
                 <span className="text-2xl font-thin mb-1">+</span>
                 <span className="text-xs font-bold">Add Photo</span>

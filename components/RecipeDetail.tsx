@@ -5,7 +5,7 @@ import {
   Play, Star, Clock, Heart, Share2, 
   ChefHat, Search, User, ArrowLeft,
   CheckCircle2, Circle, Camera, Upload, Award, Box, Eye, ArrowRightLeft, X,
-  Lightbulb, Lock, Unlock, Zap
+  Lightbulb, Lock, Unlock, Zap, ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { KnifeAnatomy } from './KnifeAnatomy';
@@ -24,7 +24,8 @@ const ScaffoldedStepCard: React.FC<{
   isCompleted: boolean;
   onToggleComplete: (hintUsed: boolean) => void;
   setActiveComparison: (data: ComparisonData) => void;
-}> = ({ step, index, isCompleted, onToggleComplete, setActiveComparison }) => {
+  coverImage?: string;
+}> = ({ step, index, isCompleted, onToggleComplete, setActiveComparison, coverImage }) => {
   const [viewState, setViewState] = useState<'challenge' | 'hint' | 'full'>('challenge');
   const [hintUsed, setHintUsed] = useState(false);
 
@@ -57,14 +58,8 @@ const ScaffoldedStepCard: React.FC<{
   };
 
   const hasComparison = !!step.comparison;
-
-  // Determine Mastery Visuals (Gold if completed without hints)
-  // If we are completed, we check if we were "Mastered" (need parent to track this properly, 
-  // but for local UI we can infer based on whether we ever entered 'hint' state before completion?)
-  // For simplicity: If completed, use Green. If completed AND no hint used (which we pass up), parent handles logic.
-  // We'll use a visual distinction locally: Gold border if completed & !hintUsed? 
-  // Actually, once completed, we can't easily know if hint WAS used unless passed back down. 
-  // We'll stick to Standard Green for completion, but maybe a Gold Star icon if mastered.
+  const isYouTube = step.videoUrl.includes('youtube') || step.videoUrl.includes('youtu.be');
+  const hasImage = !!step.image;
 
   return (
     <div 
@@ -101,22 +96,58 @@ const ScaffoldedStepCard: React.FC<{
                 Launch Comparison
               </span>
            </div>
+         ) : hasImage ? (
+           /* STATIC PHOTO STEP (Lesson 1 & 2) */
+           <div className="w-full h-full relative group">
+             <img 
+                src={step.image} 
+                alt={step.title}
+                className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isCompleted ? 'grayscale-[50%] opacity-80' : ''}`}
+             />
+           </div>
          ) : (
-           /* STANDARD VIDEO */
+           /* STANDARD VIDEO OR YOUTUBE STATIC LINK */
            <>
-            <video 
-              src={step.videoUrl} 
-              className={`w-full h-full object-cover transition-all ${isCompleted ? 'grayscale-[50%] opacity-80' : ''}`} 
-              muted loop playsInline 
-            />
-            {/* Center Checkmark Overlay */}
-            <div className={`absolute inset-0 flex items-center justify-center bg-green-900/20 backdrop-blur-[1px] transition-opacity duration-300 ${isCompleted ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="bg-white rounded-full p-2 shadow-lg">
-                  <CheckCircle2 className="w-8 h-8 text-green-600 fill-green-50" />
-                </div>
-            </div>
+            {isYouTube ? (
+                // STATIC COVER + EXTERNAL LINK (Fixes Error 153)
+                <a 
+                  href={step.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full h-full relative group"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                   <img 
+                      src={coverImage || "https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=800"} 
+                      alt={step.title}
+                      className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isCompleted ? 'grayscale-[50%] opacity-80' : ''}`}
+                   />
+                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                       <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <Play className="w-6 h-6 text-white fill-white ml-1" />
+                       </div>
+                   </div>
+                   <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 backdrop-blur-sm">
+                      <ExternalLink className="w-3 h-3" />
+                      Watch
+                   </div>
+                </a>
+            ) : (
+                <video 
+                  src={step.videoUrl} 
+                  className={`w-full h-full object-cover transition-all ${isCompleted ? 'grayscale-[50%] opacity-80' : ''}`} 
+                  muted loop playsInline 
+                />
+            )}
            </>
          )}
+
+         {/* Center Checkmark Overlay (Visible on completion) */}
+         <div className={`absolute inset-0 flex items-center justify-center bg-green-900/20 backdrop-blur-[1px] transition-opacity duration-300 ${isCompleted ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
+             <div className="bg-white rounded-full p-2 shadow-lg">
+               <CheckCircle2 className="w-8 h-8 text-green-600 fill-green-50" />
+             </div>
+         </div>
 
          {/* Step Number Badge */}
          <div className={`absolute top-2 left-2 font-bold w-8 h-8 flex items-center justify-center rounded-full text-sm shadow-md z-20 transition-all 
@@ -227,19 +258,18 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
+  // Determine if content is a recipe (has ingredients)
+  const isRecipe = lesson.ingredientList.length > 0;
+
   // Handle Step Toggle
   const toggleStep = (stepId: number, hintUsed: boolean) => {
     if (completedSteps.includes(stepId)) {
       setCompletedSteps(prev => prev.filter(id => id !== stepId));
-      // Keep hint history even if unchecked? Maybe reset. Resetting for now.
       setStepsWithHints(prev => prev.filter(id => id !== stepId));
     } else {
       setCompletedSteps(prev => [...prev, stepId]);
       if (hintUsed) {
         setStepsWithHints(prev => [...prev, stepId]);
-      } else {
-        // If completed without hint, maybe award small animation or local bonus
-        // Ideally we'd trigger a mini-confetti or sound here
       }
     }
   };
@@ -265,7 +295,6 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
   // Handle Image Upload Mock
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      // Create a fake local URL for preview
       const url = URL.createObjectURL(e.target.files[0]);
       setSelectedImage(url);
     }
@@ -276,14 +305,14 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
     if (rating === 0) return;
     
     setReviewSubmitted(true);
-    // If user uploaded a photo, award an extra star
     if (selectedImage) {
       onEarnStar(1);
     }
   };
 
-  // Determine if this lesson needs the visual model
   const hasKnifeModel = lesson.title.toLowerCase().includes('knife') || lesson.title.toLowerCase().includes('cutting') || lesson.title.toLowerCase().includes('equipment');
+  const hasHeroVideo = !!lesson.heroVideoUrl;
+  const isHeroVideoEmbed = hasHeroVideo && (lesson.heroVideoUrl?.includes('youtube') || lesson.heroVideoUrl?.includes('youtu.be'));
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans relative">
@@ -341,7 +370,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
         )}
       </AnimatePresence>
 
-      {/* 1. Global Header (Yellow Background) */}
+      {/* 1. Global Header (Yellow Background) - CLEANED */}
       <header className="sticky top-0 z-40 bg-yellow-400 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-6">
@@ -359,22 +388,13 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
             </div>
           </div>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-xl relative hidden md:block">
-            <input 
-              type="text" 
-              placeholder="Search recipes or ingredients..."
-              className="w-full h-10 pl-10 pr-4 rounded-sm border-none focus:ring-2 focus:ring-slate-900 outline-none text-sm shadow-inner bg-white"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          </div>
-
-          {/* Login / User */}
+          {/* User Profile (No Log In Button) */}
           <div className="flex items-center gap-3">
-             <button className="flex items-center gap-1 text-sm font-bold text-slate-900 hover:opacity-70">
-                <User className="w-5 h-5" />
-                <span className="hidden md:inline">Log In</span>
-             </button>
+              <img 
+                 src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
+                 alt="User" 
+                 className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm" 
+               />
           </div>
         </div>
       </header>
@@ -386,19 +406,47 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
           
           {/* Left: Main Media */}
           <div className="relative aspect-video bg-slate-100 rounded-lg overflow-hidden shadow-lg group cursor-pointer">
-             <img 
-               src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&q=80&w=1200" 
-               alt={lesson.title} 
-               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-             />
-             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                   <Play className="w-8 h-8 text-slate-900 fill-slate-900 ml-1" />
-                </div>
-             </div>
-             <div className="absolute bottom-4 right-4 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded">
-                1:30 Video
-             </div>
+             {hasHeroVideo && isHeroVideoEmbed ? (
+                 <a 
+                   href={lesson.heroVideoUrl} 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="block w-full h-full relative"
+                 >
+                   {/* STATIC COVER IMAGE */}
+                   <img 
+                      src={lesson.image} 
+                      alt={lesson.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                   />
+                   
+                   {/* Play Button Overlay */}
+                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                       <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                          <Play className="w-8 h-8 text-white fill-white ml-1" />
+                       </div>
+                   </div>
+                   
+                   {/* Label */}
+                   <div className="absolute bottom-4 right-4 bg-black/70 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2 backdrop-blur-sm">
+                      <img src="https://www.youtube.com/s/desktop/10c80053/img/favicon.ico" alt="YT" className="w-4 h-4"/>
+                      <span>Watch Short</span>
+                   </div>
+                 </a>
+             ) : (
+                <>
+                  <img 
+                    src={lesson.image || "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&q=80&w=1200"} 
+                    alt={lesson.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {!hasHeroVideo && (
+                    <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="bg-white/90 text-slate-900 px-4 py-2 rounded-full font-bold shadow-lg">View Lesson</span>
+                    </div>
+                  )}
+                </>
+             )}
           </div>
 
           {/* Right: Meta Info */}
@@ -409,7 +457,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
               </h1>
             </div>
             
-            {/* Rating & Stats */}
+            {/* Rating & Stats (No Nutrition) */}
             <div className="flex items-center gap-4 text-sm mb-4 border-b border-slate-100 pb-4">
                <div className="flex items-center text-yellow-500 font-bold">
                   <Star className="w-5 h-5 fill-current mr-1" />
@@ -419,7 +467,8 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
                <div className="h-4 w-px bg-slate-300"></div>
                <div className="flex items-center gap-1 text-slate-600">
                   <Clock className="w-4 h-4" />
-                  <span>~{lesson.steps.reduce((acc, s) => acc + s.duration, 0) / 60 + 10} min</span>
+                  {/* Whole number time */}
+                  <span>{Math.round(lesson.steps.reduce((acc, s) => acc + s.duration, 0) / 60 + 5)} min</span>
                </div>
                <div className="h-4 w-px bg-slate-300"></div>
                <div className="flex items-center gap-1 text-slate-600">
@@ -431,13 +480,6 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
                {lesson.description}
             </p>
 
-            <div className="mb-4 flex gap-4">
-               <button className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold py-3 rounded shadow-sm border-b-4 border-yellow-600 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2">
-                  <Heart className="w-5 h-5" />
-                  Add to Favorites
-               </button>
-            </div>
-            
             {/* INTERACTIVE MODEL BUTTON - Only for Knife Lessons */}
             {hasKnifeModel && (
                <div className="mb-4">
@@ -454,39 +496,18 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
                    </p>
                </div>
             )}
-
-            {/* Nutrition Box (Bottom Right) */}
-            <div className="mt-auto bg-slate-50 border border-slate-200 rounded p-4">
-               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nutrition per serving</h3>
-               <div className="grid grid-cols-4 gap-2 text-center">
-                  <div>
-                    <div className="text-lg font-bold text-slate-800">{lesson.metadata.calories}</div>
-                    <div className="text-[10px] text-slate-500">kcal</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-slate-800">{lesson.metadata.protein}g</div>
-                    <div className="text-[10px] text-slate-500">Protein</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-slate-800">{lesson.metadata.fat}g</div>
-                    <div className="text-[10px] text-slate-500">Fat</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-slate-800">{lesson.metadata.carbs}g</div>
-                    <div className="text-[10px] text-slate-500">Carbs</div>
-                  </div>
-               </div>
-            </div>
           </div>
         </div>
 
         {/* 3. Instruction Body */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
+        <div className={`grid grid-cols-1 ${isRecipe ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-12 mb-16`}>
            
-           {/* Left Column: Step-by-Step Grid (66%) */}
-           <div className="lg:col-span-2">
+           {/* Left Column: Step-by-Step Grid */}
+           <div className={isRecipe ? 'lg:col-span-2' : 'lg:col-span-1'}>
               <div className="flex items-center justify-between mb-6">
-                 <h2 className="text-2xl font-bold text-slate-900">How to Make It</h2>
+                 <h2 className="text-2xl font-bold text-slate-900">
+                    {isRecipe ? "How to Make It" : "Learning Module"}
+                 </h2>
                  <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-slate-500">
                       {completedSteps.length}/{lesson.steps.length} Completed
@@ -496,7 +517,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
               </div>
 
               {/* Grid Layout for Steps */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className={`grid grid-cols-1 ${isRecipe ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
                  {lesson.steps.map((step, index) => (
                     <ScaffoldedStepCard 
                       key={step.id}
@@ -505,150 +526,147 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ lesson, onBack, onEa
                       isCompleted={completedSteps.includes(step.id)}
                       onToggleComplete={(hintUsed) => toggleStep(step.id, hintUsed)}
                       setActiveComparison={setActiveComparison}
+                      coverImage={lesson.image}
                     />
                  ))}
               </div>
            </div>
 
-           {/* Right Column: Ingredients List (Sticky) (33%) */}
-           <div className="relative">
-              <div className="sticky top-24 bg-white border-2 border-slate-100 rounded-xl p-6 shadow-sm">
-                 <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
-                    <h2 className="text-xl font-bold text-slate-900">Ingredients</h2>
-                    <div className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded">
-                       {lesson.metadata.servings} Servings
-                    </div>
-                 </div>
-
-                 <div className="space-y-6">
-                    {['Main', 'Seasoning', 'Garnish'].map(group => {
-                       const groupItems = lesson.ingredientList.filter(i => i.group === group);
-                       if (groupItems.length === 0) return null;
-                       
-                       return (
-                          <div key={group}>
-                             {group !== 'Main' && <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{group}</h3>}
-                             <ul className="space-y-3">
-                                {groupItems.map((ing, i) => (
-                                   <li key={i} className="flex items-baseline justify-between text-sm">
-                                      <span className="font-medium text-slate-700">{ing.name}</span>
-                                      <span className="flex-1 border-b border-dotted border-slate-300 mx-2"></span>
-                                      <span className="font-bold text-slate-900">{ing.amount}</span>
-                                   </li>
-                                ))}
-                             </ul>
-                          </div>
-                       );
-                    })}
-                 </div>
-
-                 <div className="mt-8 pt-6 border-t border-slate-100">
-                    <button className="w-full bg-slate-900 text-white font-bold py-3 rounded hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
-                       <Share2 className="w-4 h-4" />
-                       Share Recipe
-                    </button>
-                 </div>
-              </div>
-           </div>
-        </div>
-
-        {/* 4. Review & Upload Section */}
-        <div className="mt-16 border-t border-slate-200 pt-16">
-           <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-10">
-                 <h2 className="text-3xl font-bold text-slate-900 mb-2">Did you make this recipe?</h2>
-                 <p className="text-slate-500">Share a picture of your dish to earn a <span className="text-orange-500 font-bold inline-flex items-center"><Star className="w-4 h-4 fill-current mr-1"/>Star</span>!</p>
-              </div>
-
-              {!reviewSubmitted ? (
-                <div className="bg-slate-50 rounded-2xl p-8 border border-slate-200 shadow-sm">
-                   
-                   {/* Rating */}
-                   <div className="mb-8 text-center">
-                      <label className="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wide">Rate this dish</label>
-                      <div className="flex justify-center gap-2">
-                         {[1, 2, 3, 4, 5].map((star) => (
-                            <button 
-                              key={star}
-                              onMouseEnter={() => setRating(star)}
-                              onClick={() => setRating(star)}
-                              className="transition-transform hover:scale-110 focus:outline-none"
-                            >
-                               <Star 
-                                 className={`w-10 h-10 ${rating >= star ? 'fill-yellow-400 text-yellow-400' : 'text-slate-300'}`} 
-                               />
-                            </button>
-                         ))}
+           {/* Right Column: Ingredients List (Sticky) - ONLY FOR RECIPES */}
+           {isRecipe && (
+             <div className="relative">
+                <div className="sticky top-24 bg-white border-2 border-slate-100 rounded-xl p-6 shadow-sm">
+                   <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+                      <h2 className="text-xl font-bold text-slate-900">Ingredients</h2>
+                      <div className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded">
+                         {lesson.metadata.servings} Servings
                       </div>
                    </div>
 
-                   {/* Photo Upload */}
-                   <div className="mb-6">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Upload Photo (Optional)</label>
-                      <div className="flex items-center gap-4">
-                         <label className="flex-1 cursor-pointer group">
-                            <div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center transition-colors ${selectedImage ? 'border-green-500 bg-green-50' : 'border-slate-300 hover:border-orange-400 hover:bg-white bg-white'}`}>
-                               {selectedImage ? (
-                                  <div className="relative w-full h-32">
-                                     <img src={selectedImage} alt="Preview" className="w-full h-full object-contain rounded" />
-                                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold opacity-0 hover:opacity-100 transition-opacity rounded">
-                                        Change Photo
-                                     </div>
-                                  </div>
-                               ) : (
-                                  <>
-                                     <Camera className="w-8 h-8 text-slate-400 mb-2 group-hover:text-orange-500 transition-colors" />
-                                     <span className="text-sm text-slate-500 group-hover:text-slate-700">Click to upload your masterpiece</span>
-                                  </>
-                               )}
+                   <div className="space-y-6">
+                      {['Main', 'Seasoning', 'Garnish'].map(group => {
+                         const groupItems = lesson.ingredientList.filter(i => i.group === group);
+                         if (groupItems.length === 0) return null;
+                         
+                         return (
+                            <div key={group}>
+                               {group !== 'Main' && <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{group}</h3>}
+                               <ul className="space-y-3">
+                                  {groupItems.map((ing, i) => (
+                                     <li key={i} className="flex items-baseline justify-between text-sm">
+                                        <span className="font-medium text-slate-700">{ing.name}</span>
+                                        <span className="flex-1 border-b border-dotted border-slate-300 mx-2"></span>
+                                        <span className="font-bold text-slate-900">{ing.amount}</span>
+                                     </li>
+                                  ))}
+                               </ul>
                             </div>
-                            <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-                         </label>
-                      </div>
+                         );
+                      })}
                    </div>
-
-                   {/* Comment */}
-                   <div className="mb-8">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Your Review</label>
-                      <textarea 
-                         value={comment}
-                         onChange={(e) => setComment(e.target.value)}
-                         placeholder="How was the cooking process? Any tips?"
-                         className="w-full p-4 rounded-xl border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none min-h-[120px]"
-                      ></textarea>
-                   </div>
-
-                   {/* Submit */}
-                   <button 
-                      onClick={handleSubmitReview}
-                      disabled={rating === 0}
-                      className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 text-lg"
-                   >
-                      Submit Review
-                      {selectedImage && <span className="bg-yellow-400 text-slate-900 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">+1 <Star className="w-3 h-3 fill-current"/></span>}
-                   </button>
                 </div>
-              ) : (
-                <motion.div 
-                   initial={{ opacity: 0, scale: 0.9 }}
-                   animate={{ opacity: 1, scale: 1 }}
-                   className="bg-green-50 border border-green-200 rounded-2xl p-12 text-center"
-                >
-                   <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Award className="w-10 h-10" />
-                   </div>
-                   <h3 className="text-2xl font-bold text-slate-900 mb-2">Thanks for your review!</h3>
-                   <p className="text-slate-600 mb-6">Your feedback helps the community cook better.</p>
-                   {selectedImage && (
-                      <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-green-200 shadow-sm text-green-700 font-bold">
-                         <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                         <span>+1 Star Earned!</span>
-                      </div>
-                   )}
-                </motion.div>
-              )}
-           </div>
+             </div>
+           )}
         </div>
+
+        {/* 4. Review & Upload Section - ONLY FOR RECIPES */}
+        {isRecipe && (
+          <div className="mt-16 border-t border-slate-200 pt-16">
+             <div className="max-w-3xl mx-auto">
+                <div className="text-center mb-10">
+                   <h2 className="text-3xl font-bold text-slate-900 mb-2">Did you make this recipe?</h2>
+                   <p className="text-slate-500">Share a picture of your dish to earn a <span className="text-orange-500 font-bold inline-flex items-center"><Star className="w-4 h-4 fill-current mr-1"/>Star</span>!</p>
+                </div>
+
+                {!reviewSubmitted ? (
+                  <div className="bg-slate-50 rounded-2xl p-8 border border-slate-200 shadow-sm">
+                     {/* Rating */}
+                     <div className="mb-8 text-center">
+                        <label className="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wide">Rate this dish</label>
+                        <div className="flex justify-center gap-2">
+                           {[1, 2, 3, 4, 5].map((star) => (
+                              <button 
+                                key={star}
+                                onMouseEnter={() => setRating(star)}
+                                onClick={() => setRating(star)}
+                                className="transition-transform hover:scale-110 focus:outline-none"
+                              >
+                                 <Star 
+                                   className={`w-10 h-10 ${rating >= star ? 'fill-yellow-400 text-yellow-400' : 'text-slate-300'}`} 
+                                 />
+                              </button>
+                           ))}
+                        </div>
+                     </div>
+
+                     {/* Photo Upload */}
+                     <div className="mb-6">
+                        <label className="block text-sm font-bold text-slate-700 mb-2">Upload Photo (Optional)</label>
+                        <div className="flex items-center gap-4">
+                           <label className="flex-1 cursor-pointer group">
+                              <div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center transition-colors ${selectedImage ? 'border-green-500 bg-green-50' : 'border-slate-300 hover:border-orange-400 hover:bg-white bg-white'}`}>
+                                 {selectedImage ? (
+                                    <div className="relative w-full h-32">
+                                       <img src={selectedImage} alt="Preview" className="w-full h-full object-contain rounded" />
+                                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold opacity-0 hover:opacity-100 transition-opacity rounded">
+                                          Change Photo
+                                       </div>
+                                    </div>
+                                 ) : (
+                                    <>
+                                       <Camera className="w-8 h-8 text-slate-400 mb-2 group-hover:text-orange-500 transition-colors" />
+                                       <span className="text-sm text-slate-500 group-hover:text-slate-700">Click to upload your masterpiece</span>
+                                    </>
+                                 )}
+                              </div>
+                              <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                           </label>
+                        </div>
+                     </div>
+
+                     {/* Comment */}
+                     <div className="mb-8">
+                        <label className="block text-sm font-bold text-slate-700 mb-2">Your Review</label>
+                        <textarea 
+                           value={comment}
+                           onChange={(e) => setComment(e.target.value)}
+                           placeholder="How was the cooking process? Any tips?"
+                           className="w-full p-4 rounded-xl border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none min-h-[120px]"
+                        ></textarea>
+                     </div>
+
+                     {/* Submit */}
+                     <button 
+                        onClick={handleSubmitReview}
+                        disabled={rating === 0}
+                        className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 text-lg"
+                     >
+                        Submit Review
+                        {selectedImage && <span className="bg-yellow-400 text-slate-900 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">+1 <Star className="w-3 h-3 fill-current"/></span>}
+                     </button>
+                  </div>
+                ) : (
+                  <motion.div 
+                     initial={{ opacity: 0, scale: 0.9 }}
+                     animate={{ opacity: 1, scale: 1 }}
+                     className="bg-green-50 border border-green-200 rounded-2xl p-12 text-center"
+                  >
+                     <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Award className="w-10 h-10" />
+                     </div>
+                     <h3 className="text-2xl font-bold text-slate-900 mb-2">Thanks for your review!</h3>
+                     <p className="text-slate-600 mb-6">Your feedback helps the community cook better.</p>
+                     {selectedImage && (
+                        <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-green-200 shadow-sm text-green-700 font-bold">
+                           <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                           <span>+1 Star Earned!</span>
+                        </div>
+                     )}
+                  </motion.div>
+                )}
+             </div>
+          </div>
+        )}
 
       </main>
     </div>

@@ -15,37 +15,37 @@ export const INITIAL_STATS: UserStats = {
   title: "Prep Cook",
   stars: 120,
   completedLessons: [],
-  uploadedPhotos: ["https://picsum.photos/id/1080/200/200", "https://picsum.photos/id/835/200/200"]
+  uploadedPhotos: [] // Start empty
 };
 
 export const DASHBOARD_DATA: Record<string, DashboardItem[]> = {
   lesson1: [
     {
       id: "safety-101",
-      title: "Kitchen Safety & Hygiene",
+      title: "Key Terminology: Safety",
       type: "foundation",
       image: "https://images.unsplash.com/photo-1556910103-1c02745a30bf?auto=format&fit=crop&q=80&w=800",
       duration: "5 min",
       level: "Beginner",
-      tags: ["Safety", "Hygiene"]
+      tags: ["Terms", "Hygiene"]
     },
     {
       id: "equipment-101",
-      title: "Essential Equipment",
+      title: "Key Terminology: Equipment",
       type: "foundation",
       image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=800",
       duration: "8 min",
       level: "Beginner",
-      tags: ["Tools", "Setup"]
+      tags: ["Terms", "Tools"]
     },
     {
       id: "market-101",
-      title: "Going to the Store",
+      title: "Key Terminology: Produce",
       type: "foundation",
       image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800",
       duration: "10 min",
       level: "Beginner",
-      tags: ["Shopping", "Produce"]
+      tags: ["Terms", "Selection"]
     }
   ],
   lesson2: [
@@ -117,10 +117,14 @@ export const DASHBOARD_DATA: Record<string, DashboardItem[]> = {
   ]
 };
 
+// --- RECIPES (LESSON 3) ---
+
 const SCRAMBLED_EGGS_LESSON: Lesson = {
   id: "scrambled-eggs-101",
   title: "Mastering Soft Scrambled Eggs",
   description: "Learn the art of heat control and continuous movement for custard-like texture. A perfect breakfast staple.",
+  image: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&q=80&w=1200",
+  heroVideoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS", // Placeholder using working link
   metadata: {
     rating: 4.8,
     reviewCount: 342,
@@ -128,30 +132,11 @@ const SCRAMBLED_EGGS_LESSON: Lesson = {
     carbs: 2,
     fat: 16,
     protein: 14,
-    cost: "Low (< $3)",
+    cost: "", // Removed Free
     difficulty: "Easy",
     servings: 2
   },
-  tools: [
-    {
-      id: "spatula",
-      name: "Silicone Spatula",
-      image: "https://images.unsplash.com/photo-1588612663969-96860368c5b5?auto=format&fit=crop&q=80&w=800",
-      labels: [
-        { text: "Flexible Head", position: { top: "30%", left: "65%" } },
-        { text: "Heat Resistant Grip", position: { top: "65%", left: "35%" } }
-      ]
-    }
-  ],
-  ingredients: [
-    {
-      id: "eggs",
-      name: "Large Eggs",
-      goodImage: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&q=80&w=400",
-      badImage: "https://images.unsplash.com/photo-1598965628757-5e135246714c?auto=format&fit=crop&q=80&w=400",
-      tips: "Fresh eggs have a high, firm yolk."
-    }
-  ],
+  tools: [], ingredients: [],
   ingredientList: [
     { name: "Large Eggs", amount: "4 pcs", group: "Main" },
     { name: "Unsalted Butter", amount: "1 tbsp", group: "Main" },
@@ -163,7 +148,7 @@ const SCRAMBLED_EGGS_LESSON: Lesson = {
     {
       id: 1,
       title: "Crack & Whisk",
-      videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200&profile_id=164&oauth2_token_id=57447761",
+      videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS",
       duration: 10,
       instruction: "Whisk eggs vigorously until *frothy* and uniform in color. Add a pinch of *salt* now.",
       challenge: "When should you add the salt, and why?",
@@ -172,22 +157,16 @@ const SCRAMBLED_EGGS_LESSON: Lesson = {
     {
       id: 2,
       title: "Heat Control",
-      videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83&profile_id=164&oauth2_token_id=57447761",
+      videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS",
       duration: 15,
       instruction: "Set burner to *Medium-Low*. Melt butter until it *foams*, but does not brown.",
       challenge: "Which heat level prevents rubbery eggs?",
       recallConcept: "Heat Mastery: Low heat enables slow coagulation.",
-      quiz: {
-        question: "Why do we use Medium-Low heat?",
-        options: ["Cook faster", "Prevent rubbery texture", "Burn butter"],
-        correctAnswerIndex: 1,
-        explanation: "High heat coagulates proteins too quickly, creating a rubbery texture."
-      }
     },
     {
       id: 3,
       title: "The Push Technique",
-      videoUrl: "https://player.vimeo.com/external/410464227.sd.mp4?s=21382405d45207c4581452a3250e2920257e8412&profile_id=164&oauth2_token_id=57447761",
+      videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS",
       duration: 20,
       instruction: "Pour eggs in. Wait *5 seconds*, then gently *push* curds from edge to center.",
       challenge: "What motion creates the 'Large Curd' texture?",
@@ -196,7 +175,7 @@ const SCRAMBLED_EGGS_LESSON: Lesson = {
     {
       id: 4,
       title: "Finish Off Heat",
-      videoUrl: "https://player.vimeo.com/external/372332147.sd.mp4?s=01726a7605d3923a1a382c442468d6c757c91350&profile_id=164&oauth2_token_id=57447761",
+      videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS",
       duration: 10,
       instruction: "Remove from heat while slightly *runny*. Residual heat will finish cooking them.",
       challenge: "Why remove the pan while the eggs are still wet?",
@@ -205,118 +184,13 @@ const SCRAMBLED_EGGS_LESSON: Lesson = {
   ]
 };
 
-export const SAMPLE_LESSON = SCRAMBLED_EGGS_LESSON; // For backward compatibility
-
-export const LESSON_DATA: Record<string, Lesson> = {
-  "scrambled-eggs-101": SCRAMBLED_EGGS_LESSON,
-  
-  "safety-101": {
-    id: "safety-101",
-    title: "Kitchen Safety 101",
-    description: "The foundation of all cooking. Learn proper hand washing and cross-contamination prevention.",
-    metadata: { rating: 5.0, reviewCount: 120, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Free", difficulty: "Beginner", servings: 1 },
-    tools: [], ingredients: [], ingredientList: [],
-    steps: [
-      { id: 1, title: "Hand Washing", videoUrl: "https://player.vimeo.com/external/372332147.sd.mp4?s=01726a7605d3923a1a382c442468d6c757c91350&profile_id=164", duration: 20, instruction: "Wash hands with warm soapy water for at least *20 seconds*." },
-      { id: 2, title: "Cross Contamination", videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200", duration: 15, instruction: "Never use the same board for *raw meat* and vegetables." }
-    ]
-  },
-  "equipment-101": {
-    id: "equipment-101",
-    title: "Essential Equipment",
-    description: "Identify and use the core tools of a professional kitchen. Includes interactive 3D model study.",
-    metadata: { rating: 4.7, reviewCount: 85, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Free", difficulty: "Beginner", servings: 1 },
-    tools: [], ingredients: [], ingredientList: [],
-    steps: [
-      { id: 1, title: "The Chef's Knife", videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", duration: 15, instruction: "The most versatile tool. Hold it by the *bolster*, not just the handle." },
-      { id: 2, title: "The Skillet", videoUrl: "https://player.vimeo.com/external/410464227.sd.mp4?s=21382405d45207c4581452a3250e2920257e8412", duration: 15, instruction: "A heavy-bottomed pan ensures *even heat* distribution." }
-    ]
-  },
-  "market-101": {
-    id: "market-101",
-    title: "Market Strategy",
-    description: "How to select the freshest produce and read labels like a pro.",
-    metadata: { rating: 4.5, reviewCount: 40, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Free", difficulty: "Beginner", servings: 1 },
-    tools: [], ingredients: [], ingredientList: [],
-    steps: [
-        { id: 1, title: "Selecting Produce", videoUrl: "https://player.vimeo.com/external/372332147.sd.mp4?s=01726a7605d3923a1a382c442468d6c757c91350", duration: 15, instruction: "Look for firm textures and vibrant colors. *Avoid* bruised items." }
-    ]
-  },
-  "tech-cutting": {
-    id: "tech-cutting",
-    title: "Knife Skills: Chopping",
-    description: "Master the 'Claw Grip' and 'Rocking Motion'. View our 3D Knife Anatomy model to understand leverage.",
-    metadata: { rating: 4.9, reviewCount: 200, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Free", difficulty: "Intermediate", servings: 1 },
-    tools: [], ingredients: [], ingredientList: [],
-    steps: [
-      { id: 1, title: "The Claw Grip", videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", duration: 15, instruction: "Tuck your fingertips *in* to protect them from the blade." },
-      { id: 2, title: "Rocking Motion", videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200", duration: 20, instruction: "Keep the tip of the knife *on the board* while rocking the handle up and down." }
-    ]
-  },
-  "tech-heat": {
-    id: "tech-heat",
-    title: "Heat Mastery: Sear vs Stir-Fry",
-    description: "Understand how temperature and motion change the outcome of your dish using the Comparison Model.",
-    metadata: { rating: 4.8, reviewCount: 150, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Free", difficulty: "Intermediate", servings: 1 },
-    tools: [], ingredients: [], ingredientList: [],
-    steps: [
-      { 
-        id: 1, 
-        title: "Comparison: Sear vs Stir-Fry", 
-        videoUrl: "", 
-        duration: 30, 
-        instruction: "Use *High Static Heat* for searing to create a crust. Use *High Motion Heat* for stir-fry to cook evenly without burning.",
-        comparison: {
-          title: "Cooking Methods",
-          itemA: {
-            label: "Pan-Sear",
-            heatLevel: "High",
-            motion: "Static",
-            cookware: "Cast Iron"
-          },
-          itemB: {
-            label: "Stir-Fry",
-            heatLevel: "Extreme",
-            motion: "Constant",
-            cookware: "Wok"
-          }
-        }
-      },
-      { 
-        id: 2, 
-        title: "The Maillard Reaction", 
-        videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", 
-        duration: 20, 
-        instruction: "Browning creates flavor. This only happens above *300°F (150°C)*." 
-      }
-    ]
-  },
-  "tech-boiling": {
-    id: "tech-boiling",
-    title: "Boiling & Blanching",
-    description: "Learn to preserve color and texture in vegetables.",
-    metadata: { rating: 4.6, reviewCount: 90, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "Low", difficulty: "Beginner", servings: 1 },
-    tools: [], ingredients: [], ingredientList: [],
-    steps: [
-        { id: 1, title: "Rolling Boil", videoUrl: "https://player.vimeo.com/external/410464227.sd.mp4?s=21382405d45207c4581452a3250e2920257e8412", duration: 10, instruction: "Wait for big, *rapid* bubbles before adding food." },
-        { id: 2, title: "Shocking", videoUrl: "https://player.vimeo.com/external/372332147.sd.mp4?s=01726a7605d3923a1a382c442468d6c757c91350", duration: 15, instruction: "Immediately transfer to *ice water* to stop cooking." }
-    ]
-  },
-  "tech-saute": {
-    id: "tech-saute",
-    title: "Sautéing Fundamentals",
-    description: "High heat, small amount of fat, and movement.",
-    metadata: { rating: 4.7, reviewCount: 110, calories: 50, carbs: 0, fat: 5, protein: 0, cost: "Low", difficulty: "Intermediate", servings: 1 },
-    tools: [], ingredients: [], ingredientList: [],
-    steps: [
-        { id: 1, title: "Preheat Pan", videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", duration: 15, instruction: "The pan must be hot *before* adding oil." }
-    ]
-  },
-  "pasta-carbonara": {
+const CARBONARA_LESSON: Lesson = {
     id: "pasta-carbonara",
     title: "Classic Carbonara",
     description: "Authentic Roman pasta. No cream, just egg yolks and pecorino.",
-    metadata: { rating: 4.9, reviewCount: 520, calories: 650, carbs: 80, fat: 25, protein: 22, cost: "Medium", difficulty: "Intermediate", servings: 2 },
+    image: "https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&q=80&w=800",
+    heroVideoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS",
+    metadata: { rating: 4.9, reviewCount: 520, calories: 650, carbs: 80, fat: 25, protein: 22, cost: "", difficulty: "Intermediate", servings: 2 },
     tools: [], ingredients: [],
     ingredientList: [
         { name: "Spaghetti", amount: "200g", group: "Main" },
@@ -329,7 +203,7 @@ export const LESSON_DATA: Record<string, Lesson> = {
       { 
         id: 1, 
         title: "Crisp the Guanciale", 
-        videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200", 
+        videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS", 
         duration: 20, 
         instruction: "Cook guanciale in a cold pan until fat *renders* and it becomes crispy.",
         challenge: "Why start with a cold pan?",
@@ -338,7 +212,7 @@ export const LESSON_DATA: Record<string, Lesson> = {
       { 
         id: 2, 
         title: "Temper the Eggs", 
-        videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", 
+        videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS", 
         duration: 15, 
         instruction: "Whisk yolks with cheese. Add a splash of *pasta water* to prevent scrambling.",
         challenge: "What does the starchy pasta water do?",
@@ -347,19 +221,22 @@ export const LESSON_DATA: Record<string, Lesson> = {
       { 
         id: 3, 
         title: "Toss and Emulsify", 
-        videoUrl: "https://player.vimeo.com/external/410464227.sd.mp4?s=21382405d45207c4581452a3250e2920257e8412", 
+        videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS", 
         duration: 20, 
         instruction: "Toss pasta with fat off heat. Add egg mixture and stir *vigorously* to create sauce.",
         challenge: "Why must this happen 'Off Heat'?",
         recallConcept: "Temperature: Eggs scramble at 150°F+ (Direct heat is too hot)."
       }
     ]
-  },
-  "steak-mashed": {
+};
+
+const STEAK_LESSON: Lesson = {
     id: "steak-mashed",
     title: "Steak & Mashed Potatoes",
     description: "The perfect sear meets creamy, buttery potatoes.",
-    metadata: { rating: 4.9, reviewCount: 890, calories: 850, carbs: 45, fat: 55, protein: 60, cost: "High", difficulty: "Advanced", servings: 2 },
+    image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&q=80&w=800",
+    heroVideoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS", // Placeholder
+    metadata: { rating: 4.9, reviewCount: 890, calories: 850, carbs: 45, fat: 55, protein: 60, cost: "", difficulty: "Advanced", servings: 2 },
     tools: [], ingredients: [],
     ingredientList: [
         { name: "Ribeye Steak", amount: "2", group: "Main" },
@@ -368,9 +245,177 @@ export const LESSON_DATA: Record<string, Lesson> = {
         { name: "Rosemary", amount: "2 sprigs", group: "Garnish" }
     ],
     steps: [
-      { id: 1, title: "The Sear", videoUrl: "https://player.vimeo.com/external/517090025.sd.mp4?s=d44865e90d3d528f45532506e680252c78572b83", duration: 25, instruction: "Place steak in smoking hot pan. Do not touch for *2 minutes* to form crust." },
-      { id: 2, title: "Butter Baste", videoUrl: "https://player.vimeo.com/external/464870335.sd.mp4?s=25f4648937989938641979317515664155694200", duration: 20, instruction: "Add butter and herbs. Tilt pan and *spoon* hot butter over the steak repeatedly." },
-      { id: 3, title: "Resting", videoUrl: "https://player.vimeo.com/external/372332147.sd.mp4?s=01726a7605d3923a1a382c442468d6c757c91350", duration: 10, instruction: "Let steak rest for *10 minutes* before slicing to retain juices." }
+      { id: 1, title: "The Sear", videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS", duration: 25, instruction: "Place steak in smoking hot pan. Do not touch for *2 minutes* to form crust." },
+      { id: 2, title: "Butter Baste", videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS", duration: 20, instruction: "Add butter and herbs. Tilt pan and *spoon* hot butter over the steak repeatedly." },
+      { id: 3, title: "Resting", videoUrl: "https://youtube.com/shorts/RKu6COo8Pxs?si=K2NIhQXRT1I5pFCS", duration: 10, instruction: "Let steak rest for *10 minutes* before slicing to retain juices." }
+    ]
+};
+
+// --- LESSON 1 & 2 (PHOTO MODULES - NO INGREDIENTS) ---
+
+export const LESSON_DATA: Record<string, Lesson> = {
+  "scrambled-eggs-101": SCRAMBLED_EGGS_LESSON,
+  "pasta-carbonara": CARBONARA_LESSON,
+  "steak-mashed": STEAK_LESSON,
+  
+  "safety-101": {
+    id: "safety-101",
+    title: "Key Terminology: Safety",
+    description: "Essential concepts for maintaining a safe and professional kitchen environment.",
+    image: "https://images.unsplash.com/photo-1556910103-1c02745a30bf?auto=format&fit=crop&q=80&w=800",
+    metadata: { rating: 5.0, reviewCount: 120, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "", difficulty: "Beginner", servings: 0 },
+    tools: [], ingredients: [], ingredientList: [], // Empty Ingredients
+    steps: [
+      { 
+        id: 1, 
+        title: "Mise en Place", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1556912165-3472769c9dca?auto=format&fit=crop&q=80&w=800",
+        duration: 30, 
+        instruction: "*Mise en place* (French for 'putting in place') means gathering and arranging all ingredients and tools *before* cooking starts." 
+      },
+      { 
+        id: 2, 
+        title: "The Danger Zone", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1606787366850-de6330128bfc?auto=format&fit=crop&q=80&w=800",
+        duration: 30, 
+        instruction: "Bacteria grow rapidly between *40°F and 140°F* (4°C - 60°C). Keep hot foods hot and cold foods cold." 
+      },
+      { 
+        id: 3, 
+        title: "Cross-Contamination", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1606851682859-99e829dc79f7?auto=format&fit=crop&q=80&w=800",
+        duration: 30, 
+        instruction: "The transfer of harmful bacteria from raw foods (like chicken) to ready-to-eat foods. Always use *separate cutting boards*." 
+      }
+    ]
+  },
+  "equipment-101": {
+    id: "equipment-101",
+    title: "Key Terminology: Equipment",
+    description: "Identifying the correct tools for the job.",
+    image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=800",
+    metadata: { rating: 4.7, reviewCount: 85, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "", difficulty: "Beginner", servings: 0 },
+    tools: [], ingredients: [], ingredientList: [],
+    steps: [
+      { 
+        id: 1, 
+        title: "The Chef's Knife", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1593642632823-8f78536788c6?auto=format&fit=crop&q=80&w=800",
+        duration: 20, 
+        instruction: "The primary tool for chopping, slicing, and dicing. The *blade* should be curved to allow a rocking motion." 
+      },
+      { 
+        id: 2, 
+        title: "Cast Iron Skillet", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&fit=crop&q=80&w=800",
+        duration: 20, 
+        instruction: "Excellent for heat retention and searing. Requires *seasoning* to maintain a non-stick surface." 
+      }
+    ]
+  },
+  "market-101": {
+    id: "market-101",
+    title: "Key Terminology: Produce",
+    description: "Terms for selecting quality ingredients.",
+    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800",
+    metadata: { rating: 4.5, reviewCount: 40, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "", difficulty: "Beginner", servings: 0 },
+    tools: [], ingredients: [], ingredientList: [],
+    steps: [
+        { 
+          id: 1, 
+          title: "Ripe vs. Overripe", 
+          videoUrl: "", 
+          image: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&q=80&w=800",
+          duration: 20, 
+          instruction: "Ripe produce yields slightly to pressure. *Overripe* produce is mushy and may have a fermented smell." 
+        }
+    ]
+  },
+  "tech-cutting": {
+    id: "tech-cutting",
+    title: "Knife Skills: Chopping",
+    description: "Master the 'Claw Grip' and 'Rocking Motion'. View our 3D Knife Anatomy model to understand leverage.",
+    image: "https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&q=80&w=800",
+    metadata: { rating: 4.9, reviewCount: 200, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "", difficulty: "Intermediate", servings: 0 },
+    tools: [], ingredients: [], ingredientList: [],
+    steps: [
+      { 
+        id: 1, 
+        title: "The Claw Grip", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1615486511484-92e172cc416d?auto=format&fit=crop&q=80&w=800",
+        duration: 15, 
+        instruction: "Tuck your fingertips *in* to protect them from the blade. Use your knuckles as a guide." 
+      },
+      { 
+        id: 2, 
+        title: "Rocking Motion", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&q=80&w=800",
+        duration: 20, 
+        instruction: "Keep the tip of the knife *on the board* while rocking the handle up and down for efficient chopping." 
+      }
+    ]
+  },
+  "tech-heat": {
+    id: "tech-heat",
+    title: "Heat Mastery: Sear vs Stir-Fry",
+    description: "Understand how temperature and motion change the outcome of your dish using the Comparison Model.",
+    image: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&fit=crop&q=80&w=800",
+    metadata: { rating: 4.8, reviewCount: 150, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "", difficulty: "Intermediate", servings: 0 },
+    tools: [], ingredients: [], ingredientList: [],
+    steps: [
+      { 
+        id: 1, 
+        title: "Comparison: Sear vs Stir-Fry", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&fit=crop&q=80&w=800",
+        duration: 30, 
+        instruction: "Use *High Static Heat* for searing to create a crust. Use *High Motion Heat* for stir-fry to cook evenly without burning.",
+        comparison: {
+          title: "Cooking Methods",
+          itemA: { label: "Pan-Sear", heatLevel: "High", motion: "Static", cookware: "Cast Iron" },
+          itemB: { label: "Stir-Fry", heatLevel: "Extreme", motion: "Constant", cookware: "Wok" }
+        }
+      },
+      { 
+        id: 2, 
+        title: "The Maillard Reaction", 
+        videoUrl: "", 
+        image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&q=80&w=800",
+        duration: 20, 
+        instruction: "Browning creates flavor. This chemical reaction happens between amino acids and reducing sugars above *300°F*." 
+      }
+    ]
+  },
+  "tech-boiling": {
+    id: "tech-boiling",
+    title: "Boiling & Blanching",
+    description: "Learn to preserve color and texture in vegetables.",
+    image: "https://images.unsplash.com/photo-1553163147-621957516919?auto=format&fit=crop&q=80&w=800",
+    metadata: { rating: 4.6, reviewCount: 90, calories: 0, carbs: 0, fat: 0, protein: 0, cost: "", difficulty: "Beginner", servings: 0 },
+    tools: [], ingredients: [], ingredientList: [],
+    steps: [
+        { id: 1, title: "Rolling Boil", videoUrl: "", image: "https://images.unsplash.com/photo-1553163147-621957516919?auto=format&fit=crop&q=80&w=800", duration: 10, instruction: "Wait for big, *rapid* bubbles before adding food." },
+        { id: 2, title: "Shocking", videoUrl: "", image: "https://images.unsplash.com/photo-1563599175-d6af243aa2e6?auto=format&fit=crop&q=80&w=800", duration: 15, instruction: "Immediately transfer to *ice water* to stop cooking." }
+    ]
+  },
+  "tech-saute": {
+    id: "tech-saute",
+    title: "Sautéing Fundamentals",
+    description: "High heat, small amount of fat, and movement.",
+    image: "https://images.unsplash.com/photo-1522037576655-7a93ce0f4d93?auto=format&fit=crop&q=80&w=800",
+    metadata: { rating: 4.7, reviewCount: 110, calories: 50, carbs: 0, fat: 5, protein: 0, cost: "", difficulty: "Intermediate", servings: 0 },
+    tools: [], ingredients: [], ingredientList: [],
+    steps: [
+        { id: 1, title: "Preheat Pan", videoUrl: "", image: "https://images.unsplash.com/photo-1522037576655-7a93ce0f4d93?auto=format&fit=crop&q=80&w=800", duration: 15, instruction: "The pan must be hot *before* adding oil to prevent sticking." }
     ]
   }
 };
+
+export const SAMPLE_LESSON = SCRAMBLED_EGGS_LESSON;
